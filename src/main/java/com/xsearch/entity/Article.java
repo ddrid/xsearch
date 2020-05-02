@@ -1,6 +1,16 @@
 package com.xsearch.entity;
 
 public class Article {
+
+    public Article() {
+    }
+
+    public Article(int index, String title, String content) {
+        this.index = index;
+        this.title = title;
+        this.content = content;
+    }
+
     int index;
 
     String title;
@@ -14,6 +24,7 @@ public class Article {
     public void setIndex(int index) {
         this.index = index;
     }
+
 
     public String getTitle() {
         return title;
