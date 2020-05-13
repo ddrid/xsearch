@@ -1,7 +1,0 @@
-spring:
-  application:
-    name:
-      xsearch
-  data:
-    mongodb:
-      uri: mongodb://xsearch_admin:123456@10.105.222.90:27017/xsearch?authSource=admin&authMechanism=SCRAM-SHA-1

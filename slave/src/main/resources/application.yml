@@ -1,0 +1,16 @@
+server:
+  port: 2001
+spring:
+  application:
+    name:
+      slave
+  data:
+    mongodb:
+      uri: mongodb://xsearch_admin:123456@10.105.222.90:27017/xsearch?authSource=admin&authMechanism=SCRAM-SHA-1
+  cloud:
+    consul:
+      host: localhost
+      port: 8500
+      discovery:
+        health-check-path: /actuator/health
+        health-check-interval: 10s
