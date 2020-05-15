@@ -1,5 +1,12 @@
+slaveNum: 4
+articleNum: 200
+
+
 server:
   port: 1001
+ribbon:
+  ConnectTimeout: 100000
+  ReadTimeout: 100000
 spring:
   application:
     name:

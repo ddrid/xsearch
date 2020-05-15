@@ -1,5 +1,8 @@
 server:
   port: 2001
+ribbon:
+  ConnectTimeout: 100000
+  ReadTimeout: 100000
 spring:
   application:
     name:
