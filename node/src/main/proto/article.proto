@@ -1,0 +1,25 @@
+syntax = "proto3";
+
+package com.xsearch.article;
+
+option java_multiple_files = true;
+option java_package = "com.xsearch.article.lib";
+option java_outer_classname = "ArticleProto";
+
+
+service ArticleService {
+  rpc PutArticle (PutArticleRequest) returns (PutArticleReply);
+}
+
+message PutArticleRequest {
+  int32 index = 1;
+  int32 segment = 2;
+  int32 updateTime = 3;
+  string url = 4;
+  string title = 5;
+  string content = 6;
+}
+
+message PutArticleReply {
+  string message = 1;
+}

@@ -1,16 +1,17 @@
-package com.xsearch.entity;
-
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.bson.Document;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class Article {
+public class Article{
 
     int index;
+
+    int segment;
 
     int updateTime;
 
@@ -19,8 +20,4 @@ public class Article {
     String title;
 
     String content;
-
-    int segment;
-
 }
-

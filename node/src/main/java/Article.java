@@ -1,5 +1,3 @@
-package com.xsearch.entity;
-
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -12,6 +10,8 @@ public class Article {
 
     int index;
 
+    int segment;
+
     int updateTime;
 
     String url;
@@ -19,8 +19,4 @@ public class Article {
     String title;
 
     String content;
-
-    int segment;
-
 }
-
