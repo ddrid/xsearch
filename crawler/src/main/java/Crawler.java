@@ -11,6 +11,7 @@ import java.io.InputStreamReader;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.List;
+import java.util.UUID;
 
 public class Crawler {
     public static void main(String[] args) throws Exception {
@@ -23,8 +24,7 @@ public class Crawler {
         MongoClient mongoClient = MongoClients.create(mongodbUrl);
         MongoDatabase db = mongoClient.getDatabase("xnode1");
 
-        //爬取200篇
-        for (int i = 0; i < 2; i++) {
+        for (int i = 0; i < 1; i++) {
             int offset = 10 * i;
             URL targetUrl = new URL("https://www.zhihu.com/api/v4/topics/19556664/feeds/essence?include=" + include + "&offset=" + offset + "&limit=" + limit);
             URLConnection connection = targetUrl.openConnection();
@@ -56,7 +56,8 @@ public class Crawler {
                 }
 
                 String content = o.getJSONObject("target").getString("content");
-                Article article = new Article(offset + count, -1, updateTime, url, title, content);
+                String id = UUID.randomUUID().toString().replace("-", "").toLowerCase();
+                Article article = new Article(id, -1, updateTime, url, title, content);
                 db.getCollection("article").insertOne(Document.parse(JSON.toJSONString(article)));
 
                 count++;

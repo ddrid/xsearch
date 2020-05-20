@@ -1,13 +1,13 @@
+package com.xsearch.api.entity;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.bson.Document;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class Article{
+public class Article {
 
     String id;
 
