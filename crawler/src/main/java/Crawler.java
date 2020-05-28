@@ -4,6 +4,9 @@ import com.mongodb.DBObject;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
 import com.mongodb.client.MongoDatabase;
+import okhttp3.FormBody;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
 import org.bson.Document;
 
 import java.io.BufferedReader;
@@ -24,7 +27,7 @@ public class Crawler {
         MongoClient mongoClient = MongoClients.create(mongodbUrl);
         MongoDatabase db = mongoClient.getDatabase("xnode1");
 
-        for (int i = 0; i < 1; i++) {
+        for (int i = 0; i < 10; i++) {
             int offset = 10 * i;
             URL targetUrl = new URL("https://www.zhihu.com/api/v4/topics/19556664/feeds/essence?include=" + include + "&offset=" + offset + "&limit=" + limit);
             URLConnection connection = targetUrl.openConnection();
@@ -56,9 +59,23 @@ public class Crawler {
                 }
 
                 String content = o.getJSONObject("target").getString("content");
-                String id = UUID.randomUUID().toString().replace("-", "").toLowerCase();
-                Article article = new Article(id, -1, updateTime, url, title, content);
-                db.getCollection("article").insertOne(Document.parse(JSON.toJSONString(article)));
+                Article article = new Article("", -1, updateTime, url, title, content);
+
+                OkHttpClient client = new OkHttpClient();
+                FormBody formBody = new FormBody.Builder()
+                        .add("title", title)
+                        .add("updateTime", "" + updateTime)
+                        .add("url", url)
+                        .add("content", content)
+                        .build();
+
+                Request request = new Request.Builder()
+                        .url("localhost")
+                        .put(formBody)
+                        .build();
+
+
+                //db.getCollection("article").insertOne(Document.parse(JSON.toJSONString(article)));
 
                 count++;
             }

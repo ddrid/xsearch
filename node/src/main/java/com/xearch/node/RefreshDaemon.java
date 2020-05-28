@@ -1,6 +1,7 @@
 package com.xearch.node;
 
 import com.alibaba.fastjson.JSON;
+import com.hankcs.hanlp.dictionary.stopword.CoreStopWordDictionary;
 import com.hankcs.hanlp.seg.common.Term;
 import com.hankcs.hanlp.tokenizer.IndexTokenizer;
 import com.mongodb.client.FindIterable;
@@ -24,12 +25,14 @@ public class RefreshDaemon {
 
     public void start() throws Exception {
         while (true) {
-            System.out.println("------committing------");
-            commit();
-            Thread.sleep(10000);
+            for (int i = 0; i < 5; i++) {
+                System.out.println("------committing------");
+                commit();
+                Thread.sleep(2000);
+            }
             System.out.println("------merging------");
             merge();
-            Thread.sleep(10000);
+            Thread.sleep(2000);
         }
     }
 
@@ -68,8 +71,8 @@ public class RefreshDaemon {
 
         // 为新增文档生成倒排索引并保存
         Map<String, Map<String, List<Integer>>> invertedIndex = makeIndex(articles);
-        System.out.println(JSON.toJSONString(invertedIndex));
         db.getCollection("invertedIndex").insertOne(new Document("segment", count)
+                .append("articleCount",articles.size())
                 .append("invertedIndex", invertedIndex));
         System.out.println("Successfully add segment No." + count + "!");
 
@@ -84,10 +87,14 @@ public class RefreshDaemon {
         MongoCursor<Document> iterator = allIndex.iterator();
 
         int count = 0;
+        int articleCount = 0;
         // word1 -> {id1 -> [tf1, off11, off12...], id2 -> [tf2, off21, off22...], ... }
         Map<String, Map<String, List<Integer>>> mergedIndex = null;
         while (iterator.hasNext()) {
-            Map<String, Map<String, List<Integer>>> cur = iterator.next().get("invertedIndex", Map.class);
+            Document next = iterator.next();
+            int curArticleCount = next.getInteger("articleCount");
+            articleCount += curArticleCount;
+            Map<String, Map<String, List<Integer>>> cur = next.get("invertedIndex", Map.class);
             if (count == 0) {
                 mergedIndex = cur;
                 count++;
@@ -107,8 +114,10 @@ public class RefreshDaemon {
             return;
         }
         db.getCollection("invertedIndex").drop();
-        db.getCollection("invertedIndex").insertOne(new Document("segment", 0).append("invertedIndex", mergedIndex));
-        db.getCollection("article").updateMany(Filters.ne("segment", 0), new Document("$set", new Document("segment", 0)));
+        db.getCollection("invertedIndex").insertOne(new Document("segment", 0)
+                .append("articleCount",articleCount).append("invertedIndex", mergedIndex));
+        db.getCollection("article").updateMany(Filters.ne("segment", 0)
+                , new Document("$set", new Document("segment", 0)));
         System.out.println("Merge successfully!");
     }
 
@@ -123,12 +132,21 @@ public class RefreshDaemon {
         // word1 -> {id1 -> [tf1, off11, off12...], id2 -> [tf2, off21, off22...], ... }
         Map<String, Map<String, List<Integer>>> invertedIndex = new HashMap<>();
 
+
         for (Article article : articles) {
             String id = article.getId();
             System.out.println("handling article No." + id);
             String content = article.getContent();
-            List<Term> segment = IndexTokenizer.segment(content);
-            for (Term term : segment) {
+            List<Term> terms = CoreStopWordDictionary.apply(IndexTokenizer.segment(content));
+
+            // 记录总词数
+            MongoCollection<Document> collection = db.getCollection("article");
+            Bson filter = Filters.eq("id", article.getId());
+            Document document = new Document("$set", new Document("wordCount", terms.size()));
+            collection.updateOne(filter, document);
+
+
+            for (Term term : terms) {
                 String regex = ".*[<>,.]+.*";
                 //去除html标签以及特殊符号
                 if (!Pattern.compile(regex).matcher(term.word).matches()) {

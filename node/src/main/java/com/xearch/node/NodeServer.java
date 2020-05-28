@@ -1,6 +1,7 @@
 package com.xearch.node;
 
 import com.xearch.node.service.ArticleServiceImpl;
+import com.xearch.node.service.QueryServiceImpl;
 import io.grpc.Server;
 import io.grpc.ServerBuilder;
 
@@ -13,6 +14,7 @@ public class NodeServer {
     public void start() throws Exception {
         server = ServerBuilder.forPort(port)
                 .addService(new ArticleServiceImpl())
+                .addService(new QueryServiceImpl())
                 .build()
                 .start();
         System.out.println("Server started, listening on " + port);
