@@ -1,12 +1,12 @@
 package com.xearch.node.service;
 
 import com.alibaba.fastjson.JSON;
+import com.mongodb.client.MongoCursor;
 import com.mongodb.client.MongoDatabase;
-import com.xearch.node.MongoUtil;
+import com.mongodb.client.model.Filters;
 import com.xearch.node.entity.Article;
-import com.xsearch.article.lib.ArticleServiceGrpc;
-import com.xsearch.article.lib.PutArticleReply;
-import com.xsearch.article.lib.PutArticleRequest;
+import com.xearch.node.util.MongoUtil;
+import com.xsearch.article.lib.*;
 import io.grpc.stub.StreamObserver;
 import org.bson.Document;
 
@@ -25,5 +25,24 @@ public class ArticleServiceImpl extends ArticleServiceGrpc.ArticleServiceImplBas
         responseObserver.onNext(reply);
         responseObserver.onCompleted();
     }
+
+    @Override
+    public void getArticle(GetArticleRequest request, StreamObserver<GetArticleReply> responseObserver) {
+        MongoDatabase db = MongoUtil.getConnection();
+        MongoCursor<Document> cursor = db.getCollection("article").find(Filters.eq("id", request.getId())).limit(1).cursor();
+        Document article = cursor.next();
+
+        GetArticleReply reply = GetArticleReply.newBuilder()
+                .setId(article.getString("id"))
+                .setSegment(article.getInteger("segment"))
+                .setUpdateTime(article.getInteger("updateTime"))
+                .setUrl(article.getString("url"))
+                .setTitle(article.getString("title"))
+                .setContent(article.getString("content")).build();
+
+        responseObserver.onNext(reply);
+        responseObserver.onCompleted();
+    }
+
 }
 

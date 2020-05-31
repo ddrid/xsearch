@@ -1,13 +1,7 @@
-import com.alibaba.fastjson.JSON;
 import com.hankcs.hanlp.dictionary.stopword.CoreStopWordDictionary;
 import com.hankcs.hanlp.seg.common.Term;
 import com.hankcs.hanlp.tokenizer.IndexTokenizer;
 import com.mongodb.client.*;
-import com.xearch.node.MongoUtil;
-import com.xearch.node.RefreshDaemon;
-import com.xsearch.article.lib.ArticleServiceGrpc;
-import com.xsearch.article.lib.PutArticleReply;
-import com.xsearch.article.lib.PutArticleRequest;
 import com.xsearch.query.lib.QueryReply;
 import com.xsearch.query.lib.QueryRequest;
 import com.xsearch.query.lib.QueryServiceGrpc;
@@ -17,7 +11,6 @@ import org.bson.Document;
 import org.junit.Test;
 
 import java.util.*;
-import java.util.regex.Pattern;
 
 public class TestRpc {
     @Test
@@ -38,7 +31,6 @@ public class TestRpc {
         System.out.println(reply.getOffsetList());
     }
 
-
     @Test
     public void testMakeIndex() {
         String url = "mongodb://root:123456@10.105.222.90:27017";
@@ -58,15 +50,11 @@ public class TestRpc {
 
     @Test
     public void testTokenizer() {
-//        List<Term> segment = CoreStopWordDictionary.apply(IndexTokenizer.segment("hi how are you? I'm fine thank you."));
-//        for (Term t : segment) {
-//            System.out.println(t.word);
-//            System.out.println(t.nature);
-//        }
-        Map<Integer, Integer> m = null;
-        System.out.println(m.keySet().size());
-
-
+        List<Term> segment = CoreStopWordDictionary.apply(IndexTokenizer.segment("hi how are you? I'm fine thank you."));
+        for (Term t : segment) {
+            System.out.println(t.word);
+            System.out.println(t.nature);
+        }
     }
 
     @Test
@@ -81,13 +69,8 @@ public class TestRpc {
         Collections.sort(list, comparator.reversed());
 
         System.out.println(list.get(0));
-
-
     }
 
-    @Test
-    public void testMerge() {
 
-    }
 
 }

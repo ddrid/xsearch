@@ -1,12 +1,11 @@
 package com.xearch.node.service;
 
 import com.google.protobuf.ByteString;
-import com.google.protobuf.ProtocolStringList;
 import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCursor;
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.Filters;
-import com.xearch.node.MongoUtil;
+import com.xearch.node.util.MongoUtil;
 import com.xsearch.query.lib.QueryReply;
 import com.xsearch.query.lib.QueryRequest;
 import com.xsearch.query.lib.QueryServiceGrpc;
@@ -17,6 +16,12 @@ import java.util.*;
 
 public class QueryServiceImpl extends QueryServiceGrpc.QueryServiceImplBase {
 
+    /**
+     * 执行本地查询
+     * 使用向量空间模型根据本地的倒排索引找出 topK 个分值最高的文档
+     * 向量空间模型参考 Lucene 实现
+     * https://blog.csdn.net/weixin_34205826/article/details/92088479
+     */
     @Override
     public void query(QueryRequest request, StreamObserver<QueryReply> responseObserver) {
         MongoDatabase db = MongoUtil.getConnection();
@@ -33,12 +38,10 @@ public class QueryServiceImpl extends QueryServiceGrpc.QueryServiceImplBase {
         for (ByteString bs : byteStringList) {
             termList.add(bs.toStringUtf8());
         }
-        System.out.println("termList: " + termList);
 
         List<String> idList = new ArrayList<>();
         List<Double> scoreList = new ArrayList<>();
         List<Integer> offsetList = new ArrayList<>();
-
 
         // 对每一个段进行检索，最后进行归并
         while (iterator.hasNext()) {
