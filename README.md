@@ -1,5 +1,5 @@
 # xsearch
-参考 Lucene/Elasticsearch 实现的分布式搜索引擎
+参考 Lucene/Elasticsearch 实现的简易分布式搜索引擎
 
 
 
@@ -56,7 +56,7 @@
 | ----- | -------------------- | ------ |
 | query | 查询字串             | string |
 | from  | 分页参数，结果集起点 | int    |
-| size  | 分页参数             | int    |
+| size  | 分页参数，结果集大小 | int    |
 
 **Response Body**
 
@@ -69,5 +69,5 @@
 | title      | 文档标题                 | string |
 | url        | 原链接地址               | string |
 | updateTime | 更新时间                 | int    |
-| segment    | 文档所处段号             | int    |
+| segment    | 文档所在段号             | int    |
 
