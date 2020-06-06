@@ -64,7 +64,7 @@
 | ---------- | ------------------------ | ------ |
 | id         | 文档对应唯一 id          | string |
 | score      | 评分                     | double |
-| offset     | 关键词偏移量（用于高亮） | int    |
+| highlight  | 高亮内容                | string    |
 | content    | 文档内容                 | string |
 | title      | 文档标题                 | string |
 | url        | 原链接地址               | string |
