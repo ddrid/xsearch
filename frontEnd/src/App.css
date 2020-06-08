@@ -1,0 +1,40 @@
+@import '~antd/dist/antd.css';
+.App {
+  text-align: center;
+}
+
+body,
+p,
+ul,
+ol,
+li,
+div,
+a {
+	margin: 0;
+	padding: 0;
+}
+ 
+
+ul,
+ol {
+	list-style: none;
+}
+
+em,
+i {
+	font-style: normal;
+}
+
+img {
+	border: none;
+	vertical-align: middle;
+}
+
+a {
+	text-decoration: none;
+	color: #0080ff;
+}
+
+a:hover {
+	color: #c9c9c9;
+}

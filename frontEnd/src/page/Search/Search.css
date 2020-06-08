@@ -1,0 +1,21 @@
+.search_wrapper {
+  height: 280px;
+  width: 840px;
+  margin: 0 auto;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+.search_wrapper .ant-btn {
+  line-height: 50px;
+}
+.search_wrapper .ant-input-search-button {
+  height: 50px;
+}
+.search_wrapper .anticon-search {
+  font-size: 18px;
+}
+.search_wrapper .ant-input-wrapper > input {
+  height: 50px;
+}
