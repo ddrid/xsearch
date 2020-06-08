@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
@@ -38,17 +39,17 @@ public class QueryController {
      * @return List<Article>
      */
     @ResponseBody
-    @GetMapping("/query")
-    public List<Article> query(@RequestParam("query") String query,
-                               @RequestParam("from") int from,
-                               @RequestParam("size") int size) throws Exception {
+    @PostMapping("/query")
+    public List<Article> query(String query, Integer from, Integer size) throws Exception {
+        System.out.println(query);
+        System.out.println(from);
+        System.out.println(size);
         // 分词
         List<Term> segment = CoreStopWordDictionary.apply(IndexTokenizer.segment(query));
         List<String> termList = new ArrayList<>();
         for (Term term : segment) {
             termList.add(term.word);
         }
-
         // 将查询发送到所有 node 节点进行查询，结果存放于 replyList
         List<Future<QueryReply>> futureList = new ArrayList<>();
         List<QueryReply> replyList = new ArrayList<>();
@@ -74,7 +75,9 @@ public class QueryController {
 
         // 将各节点返回的内容合并
         List<Article> articles = queryService.mergeResult(replyList, from + size);
-        return articles.subList(from, from + size);
-
+        for (Article article : articles) {
+            article.setHighlight(queryService.getHighlight(article.getContent(), article.getOffset(), termList));
+        }
+        return articles.subList(from, Math.min(from + size, articles.size()));
     }
 }

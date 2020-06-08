@@ -7,6 +7,7 @@ import axios from "axios";
 import { Link } from "react-router-dom";
 const { Search } = Input;
 
+const URL = "http://localhost:8080/query";
 class Result extends Component {
   constructor(props) {
     super(props);
@@ -17,47 +18,11 @@ class Result extends Component {
         query: "",
       },
       listData: [],
-      pageNum: [
-        {
-          text: "1",
-          sel: true,
-        },
-        {
-          text: "2",
-          sel: false,
-        },
-        {
-          text: "3",
-          sel: false,
-        },
-        {
-          text: "4",
-          sel: false,
-        },
-        {
-          text: "5",
-          sel: false,
-        },
-        {
-          text: "6",
-          sel: false,
-        },
-        {
-          text: "7",
-          sel: false,
-        },
-        {
-          text: "8",
-          sel: false,
-        },
-        {
-          text: "9",
-          sel: false,
-        },
-        {
-          text: "10",
-          sel: false,
-        },
+      pageNum: [{text: "1", sel: true},{text: "2",sel: false},
+        {text: "3", sel: false},{text: "4", sel: false},
+        {text: "5",sel: false},{text: "6",sel: false},
+        {text: "7",sel: false},{text: "8",sel: false},
+        {text: "9",sel: false},{text: "10",sel: false}
       ],
     };
   }
@@ -106,12 +71,10 @@ class Result extends Component {
       },
     });
     axios
-      .post("https://230418ad-ea7c-4a40-a773-64cd424f4c4c.mock.pstmn.io/query", {
-        params: {
-          ...reqParams,
-          query: this.props.match.params.name,
-        },
-      })
+      .post(URL, 'query='+this.state.reqParams.query+
+      '&from='+this.state.reqParams.from+
+      '&size='+this.state.reqParams.size
+      )
       .then((res) => {
         this.setState({
           listData: res.data,
@@ -128,12 +91,10 @@ class Result extends Component {
       query: e,
     });
     axios
-      .post("https://230418ad-ea7c-4a40-a773-64cd424f4c4c.mock.pstmn.io/query", {
-        params: {
-          ...reqParams,
-          query: e,
-        },
-      })
+      .post(URL, 'query='+this.state.reqParams.query+
+      '&from='+this.state.reqParams.from+
+      '&size='+this.state.reqParams.size
+      )
       .then((res) => {
         this.setState({
           listData: res.data,
@@ -154,12 +115,10 @@ class Result extends Component {
     }
 
     axios
-      .post("https://230418ad-ea7c-4a40-a773-64cd424f4c4c.mock.pstmn.io/query", {
-        params: {
-          ...reqParams,
-          from: text,
-        },
-      })
+      .post(URL, 'query='+this.state.reqParams.query+
+      '&from='+this.state.reqParams.from+
+      '&size='+this.state.reqParams.size
+      )
       .then((res) => {
         this.setState({
           listData: res.data,
@@ -281,11 +240,10 @@ class Result extends Component {
       },
       () => {
         axios
-          .post("https://230418ad-ea7c-4a40-a773-64cd424f4c4c.mock.pstmn.io/query", {
-            params: {
-              ...this.state.reqParams,
-            },
-          })
+          .post(URL, 'query='+this.state.reqParams.query+
+          '&from='+this.state.reqParams.from+
+          '&size='+this.state.reqParams.size
+          )
           .then((res) => {
             this.setState({
               listData: res.data,
@@ -305,7 +263,8 @@ class Result extends Component {
       <div className="res_content">
         <div className="res_wrapper">
           <div className="input_res">
-            <Search
+            <Search 
+              size="large"
               className="input"
               placeholder="请输入搜索内容"
               enterButton
@@ -350,7 +309,7 @@ class Result extends Component {
                       }}
                       className="key_word"
                       dangerouslySetInnerHTML={{
-                        __html: "..." + item.highlight + "...",
+                        __html: item.highlight,
                       }}
                     ></div>
                   }

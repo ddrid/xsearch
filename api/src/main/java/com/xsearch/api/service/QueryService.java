@@ -101,11 +101,34 @@ public class QueryService {
             Article article = new Article(reply.getId(), reply.getSegment(),
                     reply.getUpdateTime(), reply.getUrl(),
                     reply.getTitle(), reply.getContent(),
-                    scoreList.get(i), offsetList.get(i));
+                    scoreList.get(i), "", offsetList.get(i));
 
             resList.add(article);
         }
 
         return resList;
+    }
+
+    public String getHighlight(String content, int offset, List<String> termList) {
+        int startPos, endPos;
+        for (startPos = offset; startPos >= 0; startPos--) {
+            char c = content.charAt(startPos);
+            if (c == ',' || c == '。') {
+                break;
+            }
+        }
+        for (endPos = offset + 100; endPos < content.length(); endPos++) {
+            char c = content.charAt(endPos);
+            if (c == ',' || c == '。') {
+                break;
+            }
+        }
+        String rawHighlight = content.substring(startPos + 1, Math.min(endPos, content.length()));
+        String withoutHTML = rawHighlight.replaceAll("<[.[^>]]*>", "");
+        String emphasized = withoutHTML;
+        for (String term : termList) {
+            emphasized = emphasized.replace(term, "<em>" + term + "</em>");
+        }
+        return "..." + emphasized + "...";
     }
 }
